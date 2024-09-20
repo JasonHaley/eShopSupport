@@ -2,10 +2,11 @@
 using System.Data.Common;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+
 using Microsoft.Extensions.Configuration;
 using Azure.AI.OpenAI;
 using Azure;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 
 namespace eShopSupport.DataGenerator;
 

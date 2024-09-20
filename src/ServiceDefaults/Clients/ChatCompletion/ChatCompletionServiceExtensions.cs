@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
+using OpenAI;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -32,7 +34,7 @@ public static class ChatCompletionServiceExtensions
 
             builder.Services.AddScoped<IChatCompletionService>(services =>
             {
-                var client = services.GetRequiredService<OpenAIClient>();
+                var client = services.GetRequiredService<AzureOpenAIClient>();
                 return new AzureOpenAIChatCompletionService((string)deploymentName, client);
             });
         }

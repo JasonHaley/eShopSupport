@@ -24,10 +24,10 @@ var identityEndpoint = identityServer
     .GetEndpoint("https");
 
 // Use this if you want to use Ollama
-var chatCompletion = builder.AddOllama("chatcompletion").WithDataVolume();
+//var chatCompletion = builder.AddOllama("chatcompletion").WithDataVolume();
 
 // ... or use this if you want to use OpenAI (having also configured the API key in appsettings)
-//var chatCompletion = builder.AddConnectionString("chatcompletion");
+var chatCompletion = builder.AddConnectionString("chatcompletion");
 
 var storage = builder.AddAzureStorage("eshopsupport-storage");
 if (builder.Environment.IsDevelopment())
@@ -39,7 +39,7 @@ if (builder.Environment.IsDevelopment())
             r.WithDataVolume();
         }
 
-        r.WithImageTag("3.30.0"); // Temporary workaround for https://github.com/dotnet/aspire/issues/4646
+        r.WithImageTag("3.32.0"); // Temporary workaround for https://github.com/dotnet/aspire/issues/4646
     });
 }
 
