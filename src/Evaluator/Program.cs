@@ -6,6 +6,7 @@ using eShopSupport.Evaluator;
 using eShopSupport.ServiceDefaults.Clients.Backend;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.AzureOpenAI;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 // Comparing models:
@@ -29,7 +30,7 @@ var backend = await DevToolBackendClient.GetDevToolStaffBackendClientAsync(
     identityServerHttpClient: new HttpClient { BaseAddress = new Uri("https://localhost:7275/") },
     backendHttpClient: new HttpClient { BaseAddress = new Uri("https://localhost:7223/") });
 var chatCompletion = GetChatCompletionService("chatcompletion");
-var questions = LoadEvaluationQuestions().OrderBy(q => q.QuestionId);
+var questions = LoadEvaluationQuestions().Take(30).OrderBy(q => q.QuestionId);
 using var logFile = File.Open("log.txt", FileMode.Create, FileAccess.Write, FileShare.Read);
 using var log = new StreamWriter(logFile);
 
@@ -45,6 +46,7 @@ await Parallel.ForEachAsync(questionBatches, new ParallelOptions { MaxDegreeOfPa
     {
         lock (log)
         {
+            log.WriteLine("-----------------------------------------------------------------------------");
             log.WriteLine($"Question ID: {question.QuestionId}");
             log.WriteLine($"Question: {question.Question}");
             log.WriteLine($"True answer: {question.Answer}");
@@ -62,7 +64,13 @@ await Parallel.ForEachAsync(questionBatches, new ParallelOptions { MaxDegreeOfPa
         }
     }
 
-    Console.WriteLine($"After {allScores.Count} questions: average score = {allScores.Average():F3}, average duration = {allDurations.Select(d => d.TotalMilliseconds).Average():F3}ms");
+    var message = $"After {allScores.Count} questions: average score = {allScores.Average():F3}, average duration = {allDurations.Select(d => d.TotalMilliseconds).Average():F3}ms";
+
+    log.WriteLine("=============================================================================");
+    log.WriteLine(message);
+    log.Flush();
+
+    Console.WriteLine(message);
 });
 
 async Task<(double? Score, string Justification)[]> ScoreAnswersAsync(IReadOnlyCollection<(EvalQuestion Question, string AssistantAnswer)> questionAnswerPairs)
